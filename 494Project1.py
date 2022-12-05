@@ -196,7 +196,7 @@ class Optimize:
 # Now it's time to run the code!
 
 T = 20  # number of time steps      originally, T=100
-dim_input = 7  # state space dimensions     = #of initial states (line 144)   
+dim_input = 5  # state space dimensions     = #of initial states (line 144)   
 dim_hidden = 6  # latent dimensions
 dim_output = 1  # action space dimensions
 d = Dynamics()  # define dynamics
