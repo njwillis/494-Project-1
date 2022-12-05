@@ -77,7 +77,6 @@ class Dynamics(nn.Module):
         # c: coeff of drag  A: surface/cross sectional area v: velocity p= air density
         
         state = state_copy + delta_state + delta_state_gravity + delta_state_theta + drag*state_copy**2 
-        #print(state) # show optimal solution state space
         
         # Update state !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Think I got it
         # Note: Same as above. Use operators on matrices/tensors as much as possible. Do not use element-wise operators as they are considered inplace.
@@ -87,7 +86,6 @@ class Dynamics(nn.Module):
                             [0., 0., 0., 1., 0.],
                             [0., 0., 0., 0., 1.]])
         state = t.matmul(step_mat, state)      
-        #print(state()) # show optimal solution state space
         return state 
     
 # a deterministic controller
@@ -142,16 +140,13 @@ class Simulation(nn.Module):
         for _ in range(T):
             action = self.controller.forward(state)
             state = self.dynamics.forward(state, action)
-            print(state) # trying to show optimal solution, state space
             self.action_trajectory.append(action)
             self.state_trajectory.append(state)
-            #print(state) 
         return self.error(state)
 
     @staticmethod
     def initialize_state():
-        state = [10.0, 5.0, 2.0, 1.5, 1.0, 0.5, 0.]  # TODO: need batch of initial states   !!!!!!!!!!!!!!!!!!!! 
-        #print(state)
+        state = [0., 0., 1., 0., 0.]  # TODO: need batch of initial states   !!!!!!!!!!!!!!!!!!!! 
         return t.tensor(state, requires_grad=False).float()
 
     def error(self, state):
@@ -188,13 +183,10 @@ class Optimize:
     def train(self, epochs):
         for epoch in range(epochs):
             loss = self.step()
-            print('[%d] loss: %.3f' % (epoch + 1, loss))
             self.visualize()
 
     def visualize(self):
         data = np.array([self.simulation.state_trajectory[i].detach().numpy() for i in range(self.simulation.T)])
-        #print(data)
-        #print('[%d] state: %.3f' % (self.simulation.state_trajectory()))
         x = data[:, 0]
         y = data[:, 1]
         plt.plot(x, y)   
